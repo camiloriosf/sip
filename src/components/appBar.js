@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -93,6 +94,8 @@ const styles = theme => ({
   }
 });
 
+const MyLink = props => <Link to={props.to} {...props} />;
+
 type Props = {
   classes: Object
 };
@@ -167,7 +170,12 @@ class AppDrawer extends React.Component<Props, State> {
             </IconButton>
           </div>
           <Divider />
-          <ListItem button onClick={this.handleClick("mercado")}>
+          <ListItem
+            button
+            onClick={this.handleClick("mercado")}
+            component={MyLink}
+            to="/mercado"
+          >
             <ListItemIcon>
               <InboxIcon />
             </ListItemIcon>
@@ -182,7 +190,12 @@ class AppDrawer extends React.Component<Props, State> {
                 </ListItemIcon>
                 <ListItemText inset primary="Transferencias Económicas" />
               </ListItem>
-              <ListItem button className={classes.nested}>
+              <ListItem
+                button
+                className={classes.nested}
+                component={MyLink}
+                to="/mercado/costos"
+              >
                 <ListItemIcon>
                   <StarBorder />
                 </ListItemIcon>
@@ -196,7 +209,12 @@ class AppDrawer extends React.Component<Props, State> {
               </ListItem>
             </List>
           </Collapse>
-          <ListItem button onClick={this.handleClick("operacion")}>
+          <ListItem
+            button
+            onClick={this.handleClick("operacion")}
+            component={MyLink}
+            to="/"
+          >
             <ListItemIcon>
               <StarIcon />
             </ListItemIcon>
@@ -237,7 +255,12 @@ class AppDrawer extends React.Component<Props, State> {
               </ListItem>
             </List>
           </Collapse>
-          <ListItem button onClick={this.handleClick("desarrollo")}>
+          <ListItem
+            button
+            onClick={this.handleClick("desarrollo")}
+            component={MyLink}
+            to="/"
+          >
             <ListItemIcon>
               <SendIcon />
             </ListItemIcon>

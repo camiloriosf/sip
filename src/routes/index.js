@@ -8,7 +8,9 @@ const routes = (
   <div>
     <Switch>
       <Route exact path="/" component={Index} />
-      <Route path="/mercado" component={Mercado} />
+      {/* <Route path="/mercado/" component={Mercado} /> */}
+      <Route path="/mercado/:section" component={Mercado} />
+      <Route path="/mercado/" component={Mercado} />
       <Route component={NoMatch} />
     </Switch>
   </div>

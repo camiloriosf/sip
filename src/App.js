@@ -8,9 +8,9 @@ import AppBar from "./components/appBar";
 
 const App = ({ history }) => {
   return (
-    <AppBar>
-      <ConnectedRouter history={history}>{routes}</ConnectedRouter>
-    </AppBar>
+    <ConnectedRouter history={history}>
+      <AppBar>{routes}</AppBar>
+    </ConnectedRouter>
   );
 };
 
