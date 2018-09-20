@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
@@ -12,14 +12,23 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-// import { mailFolderListItems, otherMailFolderListItems } from "./tileData";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Collapse from "@material-ui/core/Collapse";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import StarIcon from "@material-ui/icons/Star";
+import SendIcon from "@material-ui/icons/Send";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import StarBorder from "@material-ui/icons/StarBorder";
 
-const drawerWidth = 240;
+const drawerWidth = 360;
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 440,
+    height: "100vh",
     zIndex: 1,
     overflow: "hidden",
     position: "relative",
@@ -78,12 +87,29 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3
+  },
+  nested: {
+    paddingLeft: theme.spacing.unit * 4
   }
 });
 
-class AppDrawer extends React.Component {
+type Props = {
+  classes: Object
+};
+
+type State = {
+  open: boolean,
+  mercado: boolean,
+  operacion: boolean,
+  desarrollo: boolean
+};
+
+class AppDrawer extends React.Component<Props, State> {
   state = {
-    open: false
+    open: false,
+    mercado: false,
+    operacion: false,
+    desarrollo: false
   };
 
   handleDrawerOpen = () => {
@@ -94,32 +120,30 @@ class AppDrawer extends React.Component {
     this.setState({ open: false });
   };
 
+  handleClick = (name: string) => () => {
+    this.setState(state => ({ [name]: !state[name] }));
+  };
+
   render() {
     const { classes, theme, children } = this.props;
-
+    const { open, mercado, operacion, desarrollo } = this.state;
     return (
       <div className={classes.root}>
         <AppBar
           position="absolute"
-          className={classNames(
-            classes.appBar,
-            this.state.open && classes.appBarShift
-          )}
+          className={classNames(classes.appBar, open && classes.appBarShift)}
         >
-          <Toolbar disableGutters={!this.state.open}>
+          <Toolbar disableGutters={!open}>
             <IconButton
               color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
-              className={classNames(
-                classes.menuButton,
-                this.state.open && classes.hide
-              )}
+              className={classNames(classes.menuButton, open && classes.hide)}
             >
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap>
-              Mini variant drawer
+              Sistema de Información Pública
             </Typography>
           </Toolbar>
         </AppBar>
@@ -128,10 +152,10 @@ class AppDrawer extends React.Component {
           classes={{
             paper: classNames(
               classes.drawerPaper,
-              !this.state.open && classes.drawerPaperClose
+              !open && classes.drawerPaperClose
             )
           }}
-          open={this.state.open}
+          open={open}
         >
           <div className={classes.toolbar}>
             <IconButton onClick={this.handleDrawerClose}>
@@ -143,9 +167,93 @@ class AppDrawer extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          {/* <List>{mailFolderListItems}</List> */}
-          <Divider />
-          {/* <List>{otherMailFolderListItems}</List> */}
+          <ListItem button onClick={this.handleClick("mercado")}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Mercado" />
+            {mercado ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={mercado} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Transferencias Económicas" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Costos Marginales" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Combustibles" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <ListItem button onClick={this.handleClick("operacion")}>
+            <ListItemIcon>
+              <StarIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Operación" />
+            {operacion ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={operacion} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Programada" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Real" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Desviación de la Programación" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Demanda" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Cotas de Embalses" />
+              </ListItem>
+            </List>
+          </Collapse>
+          <ListItem button onClick={this.handleClick("desarrollo")}>
+            <ListItemIcon>
+              <SendIcon />
+            </ListItemIcon>
+            <ListItemText inset primary="Desarrollo del Sistema Eléctrico" />
+            {desarrollo ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={desarrollo} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText inset primary="Planificación de la Transmisión" />
+              </ListItem>
+            </List>
+          </Collapse>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
