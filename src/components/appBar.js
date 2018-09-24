@@ -18,8 +18,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import StarIcon from "@material-ui/icons/Star";
-import SendIcon from "@material-ui/icons/Send";
+// import StarIcon from "@material-ui/icons/Star";
+// import SendIcon from "@material-ui/icons/Send";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
@@ -129,7 +129,12 @@ class AppDrawer extends React.Component<Props, State> {
 
   render() {
     const { classes, theme, children } = this.props;
-    const { open, mercado, operacion, desarrollo } = this.state;
+    const {
+      open,
+      mercado
+      // operacion,
+      // desarrollo
+    } = this.state;
     return (
       <div className={classes.root}>
         <AppBar
@@ -184,12 +189,12 @@ class AppDrawer extends React.Component<Props, State> {
           </ListItem>
           <Collapse in={mercado} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className={classes.nested}>
+              {/* <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <StarBorder />
                 </ListItemIcon>
                 <ListItemText inset primary="Transferencias Económicas" />
-              </ListItem>
+              </ListItem> */}
               <ListItem
                 button
                 className={classes.nested}
@@ -201,15 +206,15 @@ class AppDrawer extends React.Component<Props, State> {
                 </ListItemIcon>
                 <ListItemText inset primary="Costos Marginales" />
               </ListItem>
-              <ListItem button className={classes.nested}>
+              {/* <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <StarBorder />
                 </ListItemIcon>
                 <ListItemText inset primary="Combustibles" />
-              </ListItem>
+              </ListItem> */}
             </List>
           </Collapse>
-          <ListItem
+          {/* <ListItem
             button
             onClick={this.handleClick("operacion")}
             component={MyLink}
@@ -276,7 +281,7 @@ class AppDrawer extends React.Component<Props, State> {
                 <ListItemText inset primary="Planificación de la Transmisión" />
               </ListItem>
             </List>
-          </Collapse>
+          </Collapse> */}
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />

@@ -1,0 +1,7 @@
+//@flow
+
+export const barrasConstants = {
+  GET_BARRAS_REQUEST: "GET_BARRAS_REQUEST",
+  GET_BARRAS_SUCCESS: "GET_BARRAS_SUCCESS",
+  GET_BARRAS_ERROR: "GET_BARRAS_ERROR"
+};
