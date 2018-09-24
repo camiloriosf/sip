@@ -17,7 +17,10 @@ const getBarras = () => {
     return { type: barrasConstants.GET_BARRAS_REQUEST };
   }
   function success(barras) {
-    return { type: barrasConstants.GET_BARRAS_SUCCESS, payload: { barras } };
+    return {
+      type: barrasConstants.GET_BARRAS_SUCCESS,
+      payload: { barras }
+    };
   }
   function error(error) {
     return { type: barrasConstants.GET_BARRAS_ERROR, payload: { error } };

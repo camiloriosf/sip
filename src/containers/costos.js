@@ -42,8 +42,7 @@ class Costos extends React.Component<Props, State> {
     }
   };
   render() {
-    const { classes, barras } = this.props;
-    console.log(barras);
+    const { classes } = this.props;
     return (
       <div className={classes.root}>
         <Paper square>

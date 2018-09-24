@@ -2,6 +2,7 @@
 
 import React from "react";
 import Select from "react-select";
+import { List, AutoSizer } from "react-virtualized";
 import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -167,6 +168,32 @@ function Menu(props) {
   );
 }
 
+function MenuList(props) {
+  return (
+    <AutoSizer disableHeight>
+      {({ width }) => (
+        <List
+          width={width}
+          height={350}
+          rowCount={
+            props && props.children && props.children.length
+              ? props.children.length
+              : 0
+          }
+          rowHeight={50}
+          rowRenderer={({ key, index, isScrolling, isVisible, style }) => {
+            return (
+              <div key={key} style={style}>
+                {props.children[index]}
+              </div>
+            );
+          }}
+        />
+      )}
+    </AutoSizer>
+  );
+}
+
 const components = {
   Control,
   Menu,
@@ -175,7 +202,8 @@ const components = {
   Option,
   Placeholder,
   SingleValue,
-  ValueContainer
+  ValueContainer,
+  MenuList
 };
 
 type Props = {
@@ -195,7 +223,6 @@ class ChipSelect extends React.Component<Props, State> {
 
   render() {
     const { classes, theme, options, selected, handleChange } = this.props;
-
     const selectStyles = {
       input: base => ({
         ...base,
@@ -223,6 +250,7 @@ class ChipSelect extends React.Component<Props, State> {
           onChange={handleChange}
           placeholder="Seleccionar Barras"
           isMulti
+          closeMenuOnSelect={false}
         />
       </div>
     );

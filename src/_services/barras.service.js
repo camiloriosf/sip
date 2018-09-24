@@ -5,7 +5,7 @@ import { apiConstants } from "../_constants";
 
 const getBarras = async () => {
   const result = await axios.get(
-    `${apiConstants.API_URL}${apiConstants.COSTOS_MARGINALES_REALES}`,
+    `${apiConstants.API_URL}${apiConstants.BARRAS_COSTOS}`,
     {
       headers: {
         crossorigin: true,
@@ -14,8 +14,8 @@ const getBarras = async () => {
     }
   );
   const { data = {} } = result;
-  const { items = [] } = data;
-  return items;
+  const { aggs } = data.data || {};
+  return aggs;
 };
 
 export const barrasService = {

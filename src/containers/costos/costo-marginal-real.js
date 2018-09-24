@@ -2,7 +2,6 @@
 
 import React from "react";
 import { connect } from "react-redux";
-// import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 import Line from "../../components/line";
 import ChipSelect from "../../components/chip-select";
@@ -51,38 +50,19 @@ class Costos extends React.Component<Props, State> {
   state = {
     selected: []
   };
-  componentDidMount = async () => {
-    try {
-      // const uri =
-      //   "https://sipub.coordinador.cl/api/v1/recursos/costos_marginales_reales?barra_mnemotecnico__in=BA02T002SE032T002&fecha__gte=2016-01-01&fecha__lte=2018-09-23";
-      // const result = await axios.get(
-      //   `http://localhost:8080/api/${window.encodeURIComponent(uri)}`,
-      //   {
-      //     headers: {
-      //       crossorigin: true,
-      //       "Access-Control-Allow-Origin": "*"
-      //     }
-      //   }
-      // );
-      // const { data = {} } = result;
-      // console.log(data);
-    } catch (err) {}
-  };
   handleChange = value => {
     this.setState({
       selected: value
     });
   };
   render() {
-    const { classes } = this.props;
+    const { classes, barras } = this.props;
     const { selected } = this.state;
+    const { items } = barras;
     return (
       <div className={classes.root}>
         <ChipSelect
-          options={[
-            { label: "test", value: "test value" },
-            { label: "test 2", value: "test value 2" }
-          ]}
+          options={items}
           selected={selected}
           handleChange={this.handleChange}
         />
@@ -96,7 +76,7 @@ const mapDispatchToProps = {};
 
 const mapStateToProps = state => {
   return {
-    costos: state.costos
+    barras: state.barras
   };
 };
 
