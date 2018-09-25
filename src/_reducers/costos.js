@@ -64,6 +64,21 @@ const costosReducer = (
           [payload.name]: { $set: payload.value }
         }
       });
+    case costosConstants.FETCH_COSTOS_MARGINALES_REALES_SUCCESS:
+      return update(state, {
+        marginalReal: {
+          fetched: {
+            $apply: b => {
+              const { item } = payload;
+              const { mnemotecnico, date } = item;
+              return {
+                ...b,
+                [mnemotecnico]: { [date]: true, ...b[mnemotecnico] }
+              };
+            }
+          }
+        }
+      });
     default:
       return state;
   }

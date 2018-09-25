@@ -1,6 +1,7 @@
 //@flow
 
 import { costosConstants } from "../_constants";
+import { costosService } from "../_services";
 
 const setSelectedBarras = selected => {
   return async dispatch => {
@@ -100,26 +101,43 @@ const fetchCostosMarginalesReales = () => {
       dispatch(request());
       const { costos } = getState();
       const { marginalReal } = costos;
-      const { selected, results, from, to } = marginalReal;
-      const mnemotecnicos = selected.map(e => e.mnemotecnico).join(",");
-      console.log(
+      const { selected, from, to, fetched } = marginalReal;
+      const mnemotecnicos = selected.map(e => e.mnemotecnico);
+      const dates = [from.format("YYYY-MM-DD")];
+      let count = 0;
+      const fromDate = from.clone().startOf("day");
+      const toDate = to.clone().startOf("day");
+      while (!fromDate.isSame(toDate) && count < costosConstants.SAFE_COUNT) {
+        fromDate.add(1, "days");
+        dates.push(fromDate.format("YYYY-MM-DD"));
+        count++;
+      }
+      const fetch = costosService.checkFetchedData({
         mnemotecnicos,
-        // results,
-        from.format("YYYY-MM-DD"),
-        to.format("YYYY-MM-DD")
-      );
-      // dispatch(success(items));
-    } catch (err) {
+        dates,
+        fetched
+      });
+      for (const item of fetch) {
+        const { mnemotecnico, date } = item;
+        const url = `?barra_mnemotecnico__in=${mnemotecnico}&fecha__gte=${date}&fecha__lte=${date}`;
+        const results = await costosService.fetchData(
+          window.encodeURIComponent(url)
+        );
+        console.log(results);
+        dispatch(success({ item }));
+      }
+    } catch (error) {
+      console.log(error);
       dispatch(error());
     }
   };
   function request() {
     return { type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_REQUEST };
   }
-  function success(items) {
+  function success({ item }) {
     return {
       type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_SUCCESS,
-      payload: { items }
+      payload: { item }
     };
   }
   function error() {
