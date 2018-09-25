@@ -15,11 +15,12 @@ import { emphasize } from "@material-ui/core/styles/colorManipulator";
 
 const styles = theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    margin: theme.spacing.unit
   },
   input: {
     display: "flex",
-    padding: 0
+    padding: theme.spacing.unit
   },
   valueContainer: {
     display: "flex",
@@ -46,7 +47,7 @@ const styles = theme => ({
   },
   placeholder: {
     position: "absolute",
-    left: 2,
+    left: 10,
     fontSize: 16
   },
   paper: {
@@ -80,6 +81,7 @@ function inputComponent({ inputRef, ...props }) {
 function Control(props) {
   return (
     <TextField
+      variant="outlined"
       fullWidth
       InputProps={{
         inputComponent,

@@ -6,7 +6,14 @@ import { Line } from "react-chartjs-2";
 
 const styles = (theme: Object) => ({
   root: {
-    marginTop: 20
+    // marginTop: 20,
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  graph: {
+    width: "90%"
   }
 });
 
@@ -22,7 +29,9 @@ class Costos extends React.Component<Props, State> {
     const { classes, data } = this.props;
     return (
       <div className={classes.root}>
-        <Line data={data} />
+        <div className={classes.graph}>
+          <Line data={data} />
+        </div>
       </div>
     );
   }

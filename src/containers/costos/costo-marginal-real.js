@@ -3,8 +3,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import Line from "../../components/line";
 import ChipSelect from "../../components/chip-select";
+import TimeFilter from "../../components/time-filter";
+import MoneyFilter from "../../components/money-filter";
+import { costosActions } from "../../_actions";
 
 const data = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -36,7 +41,10 @@ const data = {
 const styles = theme => ({
   root: {
     marginTop: 20,
-    maxWidth: 800
+    width: "100%"
+  },
+  button: {
+    margin: theme.spacing.unit
   }
 });
 
@@ -47,36 +55,72 @@ type Props = {
 type State = {};
 
 class Costos extends React.Component<Props, State> {
-  state = {
-    selected: []
-  };
   handleChange = value => {
-    this.setState({
-      selected: value
-    });
+    this.props.setSelectedBarras(value);
+  };
+  handleTimeFilter = event => {
+    this.props.setTimeFilter(event.target.value);
+  };
+  handleMoneyFilter = event => {
+    this.props.setMoneyFilter(event.target.value);
   };
   render() {
-    const { classes, barras } = this.props;
-    const { selected } = this.state;
+    const { classes, barras, costos, fetchCostosMarginalesReales } = this.props;
     const { items } = barras;
+    const { marginalReal } = costos;
+    const { selected, timeFilter, moneyFilter } = marginalReal;
     return (
       <div className={classes.root}>
-        <ChipSelect
-          options={items}
-          selected={selected}
-          handleChange={this.handleChange}
-        />
-        <Line data={data} />
+        <Grid
+          alignItems="flex-start"
+          justify="space-around"
+          container
+          spacing={16}
+        >
+          <Grid item xs={3}>
+            <TimeFilter
+              value={timeFilter}
+              handleChange={this.handleTimeFilter}
+            />
+            <MoneyFilter
+              value={moneyFilter}
+              handleChange={this.handleMoneyFilter}
+            />
+            <ChipSelect
+              options={items}
+              selected={selected}
+              handleChange={this.handleChange}
+            />
+            <Button
+              color="primary"
+              variant="extendedFab"
+              fullWidth
+              className={classes.button}
+              onClick={fetchCostosMarginalesReales}
+            >
+              Actualizar
+            </Button>
+          </Grid>
+          <Grid item xs={9}>
+            <Line data={data} />
+          </Grid>
+        </Grid>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setSelectedBarras: costosActions.setSelectedBarras,
+  setTimeFilter: costosActions.setTimeFilter,
+  setMoneyFilter: costosActions.setMoneyFilter,
+  fetchCostosMarginalesReales: costosActions.fetchCostosMarginalesReales
+};
 
 const mapStateToProps = state => {
   return {
-    barras: state.barras
+    barras: state.barras,
+    costos: state.costos
   };
 };
 
