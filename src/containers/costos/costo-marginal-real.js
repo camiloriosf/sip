@@ -9,6 +9,7 @@ import Line from "../../components/line";
 import ChipSelect from "../../components/chip-select";
 import TimeFilter from "../../components/time-filter";
 import MoneyFilter from "../../components/money-filter";
+import DateFilter from "../../components/date-filter";
 import { costosActions } from "../../_actions";
 
 const data = {
@@ -64,11 +65,14 @@ class Costos extends React.Component<Props, State> {
   handleMoneyFilter = event => {
     this.props.setMoneyFilter(event.target.value);
   };
+  handleDateChange = (name: string) => (value: string) => {
+    this.props.setDateFilter({ name, value });
+  };
   render() {
     const { classes, barras, costos, fetchCostosMarginalesReales } = this.props;
     const { items } = barras;
     const { marginalReal } = costos;
-    const { selected, timeFilter, moneyFilter } = marginalReal;
+    const { selected, timeFilter, moneyFilter, from, to } = marginalReal;
     return (
       <div className={classes.root}>
         <Grid
@@ -78,6 +82,11 @@ class Costos extends React.Component<Props, State> {
           spacing={16}
         >
           <Grid item xs={3}>
+            <DateFilter
+              from={from}
+              to={to}
+              handleDateChange={this.handleDateChange}
+            />
             <TimeFilter
               value={timeFilter}
               handleChange={this.handleTimeFilter}
@@ -114,6 +123,7 @@ const mapDispatchToProps = {
   setSelectedBarras: costosActions.setSelectedBarras,
   setTimeFilter: costosActions.setTimeFilter,
   setMoneyFilter: costosActions.setMoneyFilter,
+  setDateFilter: costosActions.setDateFilter,
   fetchCostosMarginalesReales: costosActions.fetchCostosMarginalesReales
 };
 

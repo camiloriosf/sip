@@ -1,6 +1,7 @@
 // @flow
 
 import update from "immutability-helper";
+import moment from "moment";
 import { costosConstants } from "../_constants";
 
 type MarginalReal = {
@@ -8,7 +9,9 @@ type MarginalReal = {
   selected: Array<Object>,
   fetched: Object,
   timeFilter: string,
-  moneyFilter: string
+  moneyFilter: string,
+  from: string,
+  to: string
 };
 
 export type CostosState = {
@@ -21,7 +24,9 @@ const defaultState = {
     selected: [],
     fetched: {},
     timeFilter: "hour",
-    moneyFilter: "clp"
+    moneyFilter: "clp",
+    from: moment(),
+    to: moment()
   }
 };
 
@@ -51,6 +56,12 @@ const costosReducer = (
       return update(state, {
         marginalReal: {
           moneyFilter: { $set: payload.value }
+        }
+      });
+    case costosConstants.SET_DATE_FILTER_SUCCESS:
+      return update(state, {
+        marginalReal: {
+          [payload.name]: { $set: payload.value }
         }
       });
     default:

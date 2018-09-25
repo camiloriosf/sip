@@ -71,14 +71,43 @@ const setMoneyFilter = value => {
   }
 };
 
+const setDateFilter = ({ name, value }) => {
+  return async dispatch => {
+    try {
+      dispatch(request());
+      dispatch(success({ name, value }));
+    } catch (err) {
+      dispatch(error());
+    }
+  };
+  function request() {
+    return { type: costosConstants.SET_DATE_FILTER_REQUEST };
+  }
+  function success({ name, value }) {
+    return {
+      type: costosConstants.SET_DATE_FILTER_SUCCESS,
+      payload: { name, value }
+    };
+  }
+  function error() {
+    return { type: costosConstants.SET_DATE_FILTER_ERROR };
+  }
+};
+
 const fetchCostosMarginalesReales = () => {
   return async (dispatch, getState) => {
     try {
       dispatch(request());
       const { costos } = getState();
       const { marginalReal } = costos;
-      const { selected, results } = marginalReal;
-      console.log(selected, results);
+      const { selected, results, from, to } = marginalReal;
+      const mnemotecnicos = selected.map(e => e.mnemotecnico).join(",");
+      console.log(
+        mnemotecnicos,
+        // results,
+        from.format("YYYY-MM-DD"),
+        to.format("YYYY-MM-DD")
+      );
       // dispatch(success(items));
     } catch (err) {
       dispatch(error());
@@ -102,5 +131,6 @@ export const costosActions = {
   setSelectedBarras,
   setTimeFilter,
   setMoneyFilter,
+  setDateFilter,
   fetchCostosMarginalesReales
 };
