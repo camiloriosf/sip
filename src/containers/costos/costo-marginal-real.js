@@ -5,60 +5,13 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import rColor from "random-color";
 import Line from "../../components/line";
 import ChipSelect from "../../components/chip-select";
 import TimeFilter from "../../components/time-filter";
 import MoneyFilter from "../../components/money-filter";
 import DateFilter from "../../components/date-filter";
 import { costosActions } from "../../_actions";
-
-const data = {
-  labels: ["01", "02", "03", "04", "05", "06", "07"],
-  datasets: [
-    {
-      label: "BA22T027SE062G216",
-      fill: false,
-      lineTension: 0.1,
-      // backgroundColor: "rgba(75,192,192,0.4)",
-      borderColor: "rgba(75,192,192,1)",
-      borderCapStyle: "butt",
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: "miter",
-      pointBorderColor: "rgba(75,192,192,1)",
-      pointBackgroundColor: "#fff",
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: "rgba(75,192,192,1)",
-      pointHoverBorderColor: "rgba(220,220,220,1)",
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      data: [65, 59, 80, 81, 56, 55, 40]
-    },
-    {
-      label: "BA22T027SE062G217",
-      fill: false,
-      lineTension: 0.1,
-      // backgroundColor: "rgba(75,192,192,0.4)",
-      borderColor: "rgba(75,192,192,1)",
-      borderCapStyle: "butt",
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: "miter",
-      pointBorderColor: "rgba(75,192,192,1)",
-      pointBackgroundColor: "#fff",
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: "rgba(75,192,192,1)",
-      pointHoverBorderColor: "rgba(220,220,220,1)",
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      data: [35, 29, 90, 91, 76, 25, 10]
-    }
-  ]
-};
 
 const styles = theme => ({
   root: {
@@ -77,6 +30,9 @@ type Props = {
 type State = {};
 
 class Costos extends React.Component<Props, State> {
+  componentDidUpdate = () => {
+    console.log("updated");
+  };
   handleChange = value => {
     this.props.setSelectedBarras(value);
   };
@@ -89,11 +45,114 @@ class Costos extends React.Component<Props, State> {
   handleDateChange = (name: string) => (value: string) => {
     this.props.setDateFilter({ name, value });
   };
+  renderData = ({
+    selected,
+    timeFilter,
+    timeMap,
+    moneyFilter,
+    from,
+    to,
+    results
+  }: {
+    selected: Array<Object>,
+    timeFilter: string,
+    timeMap: Object,
+    moneyFilter: string,
+    from: string,
+    to: string,
+    results: Object
+  }) => {
+    try {
+      const labels = [];
+      const datasets = [];
+      const fromDate = from
+        .clone()
+        .startOf(timeMap[timeFilter] === "h" ? "d" : timeMap[timeFilter]);
+      const toDate = to
+        .clone()
+        .endOf(timeMap[timeFilter] === "h" ? "d" : timeMap[timeFilter]);
+      let safe = 0;
+      while (safe < 200000 && !fromDate.isSameOrAfter(toDate)) {
+        fromDate.add(1, timeMap[timeFilter]);
+        if (timeFilter === "hourly") {
+          const date = fromDate.format("YYYY-MM-DD");
+          const time = fromDate.format("HH:mm");
+          if (time === "23:00") {
+            labels.push(`${date} ${time}`);
+            labels.push(`${date} 24:00`);
+          } else if (time !== "00:00") {
+            labels.push(`${date} ${time}`);
+          }
+        }
+        safe++;
+      }
+
+      for (const item of selected) {
+        if (
+          results[item.mnemotecnico] &&
+          results[item.mnemotecnico][timeFilter]
+        ) {
+          const color = rColor();
+          const dataset = {
+            fill: false,
+            lineTension: 0.1,
+            borderColor: color.rgbString(),
+            borderCapStyle: "butt",
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: "miter",
+            pointBorderColor: color.rgbString(),
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: color.rgbString(),
+            pointHoverBorderColor: color.rgbString(),
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10
+          };
+          const barra = results[item.mnemotecnico][timeFilter];
+          dataset["label"] = item.nombre;
+          dataset["data"] = [];
+          for (const label of labels) {
+            if (barra[label]) {
+              dataset["data"].push(barra[label][moneyFilter]);
+            } else {
+              dataset["data"].push(0);
+            }
+          }
+          datasets.push(dataset);
+        }
+      }
+      return { labels, datasets };
+    } catch (error) {
+      console.log(error);
+    }
+  };
   render() {
     const { classes, barras, costos, fetchCostosMarginalesReales } = this.props;
     const { items } = barras;
     const { marginalReal } = costos;
-    const { selected, timeFilter, moneyFilter, from, to } = marginalReal;
+    const {
+      selected,
+      timeFilter,
+      timeMap,
+      moneyFilter,
+      from,
+      to,
+      results
+    } = marginalReal;
+
+    const data1 = this.renderData({
+      selected,
+      timeFilter,
+      timeMap,
+      moneyFilter,
+      from,
+      to,
+      results
+    });
+    // console.log(data1);
     return (
       <div className={classes.root}>
         <Grid
@@ -102,7 +161,7 @@ class Costos extends React.Component<Props, State> {
           container
           spacing={16}
         >
-          <Grid item xs={3}>
+          <Grid item xs={12} md={3}>
             <DateFilter
               from={from}
               to={to}
@@ -131,8 +190,8 @@ class Costos extends React.Component<Props, State> {
               Actualizar
             </Button>
           </Grid>
-          <Grid item xs={9}>
-            <Line data={data} />
+          <Grid item xs={12} md={9}>
+            <Line data={data1} />
           </Grid>
         </Grid>
       </div>

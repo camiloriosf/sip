@@ -63,6 +63,7 @@ class DateFilter extends React.Component<Props> {
             autoOk
             disableFuture
             minDate={from}
+            maxDate={moment().add(-1, "day")}
           />
         </div>
       </MuiPickersUtilsProvider>

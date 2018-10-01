@@ -108,7 +108,7 @@ const fetchCostosMarginalesReales = () => {
       const fromDate = from.clone().startOf("day");
       const toDate = to.clone().startOf("day");
       while (!fromDate.isSame(toDate) && count < costosConstants.SAFE_COUNT) {
-        fromDate.add(1, "days");
+        fromDate.add(1, "days").startOf("day");
         dates.push(fromDate.format("YYYY-MM-DD"));
         count++;
       }
@@ -117,27 +117,33 @@ const fetchCostosMarginalesReales = () => {
         dates,
         fetched
       });
-      for (const item of fetch) {
-        const { mnemotecnico, date } = item;
-        const url = `?barra_mnemotecnico__in=${mnemotecnico}&fecha__gte=${date}&fecha__lte=${date}`;
-        const results = await costosService.fetchData(
-          window.encodeURIComponent(url)
-        );
-        console.log(results);
-        dispatch(success({ item }));
+      const blocks = costosService.createBlocks({ fetch });
+      for (const item of blocks) {
+        const { mnemotecnico, start, end } = item;
+        const url = `?barra_mnemotecnico__in=${mnemotecnico}&fecha__gte=${start}&fecha__lte=${end}`;
+        // console.log(item, url);
+        // const results = await costosService.fetchData(
+        //   window.encodeURIComponent(url)
+        // );
+        costosService
+          .fetchData(window.encodeURIComponent(url))
+          .then(results => {
+            dispatch(success({ item, results }));
+          });
+        // console.log(results);
+        // dispatch(success({ item, results }));
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
       dispatch(error());
     }
   };
   function request() {
     return { type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_REQUEST };
   }
-  function success({ item }) {
+  function success({ item, results }) {
     return {
       type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_SUCCESS,
-      payload: { item }
+      payload: { item, results }
     };
   }
   function error() {

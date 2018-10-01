@@ -35,9 +35,10 @@ class TimeFilter extends React.Component {
             value={value}
             onChange={handleChange}
           >
-            <FormControlLabel value="hour" control={<Radio />} label="Hora" />
-            <FormControlLabel value="month" control={<Radio />} label="Mes" />
-            <FormControlLabel value="year" control={<Radio />} label="Año" />
+            <FormControlLabel value="hourly" control={<Radio />} label="Hora" />
+            <FormControlLabel value="daily" control={<Radio />} label="Día" />
+            <FormControlLabel value="monthly" control={<Radio />} label="Mes" />
+            <FormControlLabel value="yearly" control={<Radio />} label="Año" />
           </RadioGroup>
         </FormControl>
       </div>
