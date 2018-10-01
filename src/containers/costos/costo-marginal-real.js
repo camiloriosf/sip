@@ -143,7 +143,7 @@ class Costos extends React.Component<Props, State> {
       results
     } = marginalReal;
 
-    const data1 = this.renderData({
+    const data = this.renderData({
       selected,
       timeFilter,
       timeMap,
@@ -191,7 +191,7 @@ class Costos extends React.Component<Props, State> {
             </Button>
           </Grid>
           <Grid item xs={12} md={9}>
-            <Line data={data1} />
+            <Line data={data} />
           </Grid>
         </Grid>
       </div>
