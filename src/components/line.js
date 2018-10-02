@@ -2,12 +2,16 @@
 
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Line } from "react-chartjs-2";
-import moment from "moment";
+import Highcharts from "highcharts";
+import ExportHighCharts from "highcharts/modules/exporting";
+import ExportDataHighCharts from "highcharts/modules/export-data";
+import HighchartsReact from "highcharts-react-official";
+
+ExportHighCharts(Highcharts);
+ExportDataHighCharts(Highcharts);
 
 const styles = (theme: Object) => ({
   root: {
-    // marginTop: 20,
     width: "100%",
     display: "flex",
     alignItems: "center",
@@ -20,53 +24,102 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  data: Object
+  data: Object,
+  title: string,
+  suffix: string,
+  loader: Object
 };
 
 type State = {};
 
 class Costos extends React.Component<Props, State> {
+  shouldComponentUpdate = props => {
+    const { loader } = props;
+    const { loading } = loader;
+    return !loading;
+  };
+
   render() {
-    const { classes, data } = this.props;
+    const { classes, data, title, suffix } = this.props;
+
     const options = {
-      responsive: true,
-      tooltips: {
-        mode: "label",
-        callbacks: {
-          title: function(tooltipItem, data) {
-            return `${data["labels"][tooltipItem[0]["index"]]}`;
-          },
-          label: function(tooltipItem, data) {
-            return `${
-              data["datasets"][tooltipItem["datasetIndex"]]["label"]
-            }: ${
-              data["datasets"][tooltipItem["datasetIndex"]]["data"][
-                tooltipItem["index"]
-              ]
-            } (USD/MWh)`;
+      chart: {
+        type: "spline",
+        zoomType: "x",
+        backgroundColor: "rgba(255, 255, 255, 0.0)"
+      },
+      title: {
+        text: ""
+      },
+      xAxis: {
+        categories: data.categories
+      },
+      yAxis: {
+        title: {
+          text: title
+        },
+        labels: {
+          formatter: function() {
+            return this.value;
           }
         }
       },
-      scales: {
-        xAxes: [
-          {
-            ticks: {
-              callback: function(value, index, values) {
-                const date = value.split(" ");
-                const momentDate = moment(date[0]);
-                if (date[1] === "01:00")
-                  return `${momentDate.format("MMM DD")} - ${date[1]}`;
-                return `${date[1]}`;
-              }
-            }
+      tooltip: {
+        crosshairs: true,
+        shared: true,
+        valueSuffix: suffix
+      },
+      plotOptions: {
+        spline: {
+          marker: {
+            radius: 4,
+            lineColor: "#666666",
+            lineWidth: 1
           }
-        ]
+        }
+      },
+      series: data.datasets,
+      exporting: {
+        menuItemDefinitions: {
+          downloadPNG: {
+            text: "Descargar PNG"
+          },
+          downloadJPEG: {
+            text: "Descargar JPEG"
+          },
+          downloadPDF: {
+            text: "Descargar PDF"
+          },
+          downloadSVG: {
+            text: "Descargar SVG"
+          },
+          downloadCSV: {
+            text: "Descargar CSV"
+          },
+          downloadXLS: {
+            text: "Descargar Excel"
+          }
+        },
+        buttons: {
+          contextButton: {
+            menuItems: [
+              "downloadPNG",
+              "downloadJPEG",
+              "downloadPDF",
+              "downloadSVG",
+              "separator",
+              "downloadCSV",
+              "downloadXLS"
+            ]
+          }
+        }
       }
     };
+
     return (
       <div className={classes.root}>
         <div className={classes.graph}>
-          <Line data={data} options={options} />
+          <HighchartsReact highcharts={Highcharts} options={options} />
         </div>
       </div>
     );

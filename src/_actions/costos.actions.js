@@ -104,13 +104,14 @@ const fetchCostosMarginalesReales = () => {
       const { selected, from, to, fetched } = marginalReal;
       const mnemotecnicos = selected.map(e => e.mnemotecnico);
       const dates = [from.format("YYYY-MM-DD")];
-      let count = 0;
+      // let count = 0;
       const fromDate = from.clone().startOf("day");
       const toDate = to.clone().startOf("day");
-      while (!fromDate.isSame(toDate) && count < costosConstants.SAFE_COUNT) {
+      // while (!fromDate.isSame(toDate) && count < costosConstants.SAFE_COUNT) {
+      while (!fromDate.isSame(toDate)) {
         fromDate.add(1, "days").startOf("day");
         dates.push(fromDate.format("YYYY-MM-DD"));
-        count++;
+        // count++;
       }
       const fetch = costosService.checkFetchedData({
         mnemotecnicos,
@@ -118,36 +119,40 @@ const fetchCostosMarginalesReales = () => {
         fetched
       });
       const blocks = costosService.createBlocks({ fetch });
+      const fetchCount = blocks.length;
       for (const item of blocks) {
         const { mnemotecnico, start, end } = item;
         const url = `?barra_mnemotecnico__in=${mnemotecnico}&fecha__gte=${start}&fecha__lte=${end}`;
-        // console.log(item, url);
-        // const results = await costosService.fetchData(
-        //   window.encodeURIComponent(url)
-        // );
         costosService
           .fetchData(window.encodeURIComponent(url))
           .then(results => {
-            dispatch(success({ item, results }));
+            dispatch(success({ item, results, fetchCount }));
+          })
+          .catch(() => {
+            dispatch(error({ fetchCount }));
           });
-        // console.log(results);
-        // dispatch(success({ item, results }));
       }
+
+      if (blocks.length === 0)
+        dispatch(success({ item: {}, results: [], fetchCount: 0 }));
     } catch (err) {
-      dispatch(error());
+      dispatch(error({ fetchCount: 0 }));
     }
   };
   function request() {
     return { type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_REQUEST };
   }
-  function success({ item, results }) {
+  function success({ item, results, fetchCount }) {
     return {
       type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_SUCCESS,
-      payload: { item, results }
+      payload: { item, results, fetchCount }
     };
   }
-  function error() {
-    return { type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_ERROR };
+  function error({ fetchCount }) {
+    return {
+      type: costosConstants.FETCH_COSTOS_MARGINALES_REALES_ERROR,
+      payload: { fetchCount }
+    };
   }
 };
 

@@ -9,6 +9,8 @@
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
     "connected-react-router": "^4.4.1",
+    "highcharts": "^6.1.4",
+    "highcharts-react-official": "^1.4.0",
     "history": "^4.7.2",
     "immutability-helper": "^2.8.1",
     "material-ui-pickers": "^1.0.0-rc.14",
