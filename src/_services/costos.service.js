@@ -3,6 +3,15 @@
 import axios from "axios";
 import moment from "moment";
 import { apiConstants } from "../_constants";
+// import myWorker from "../_workers/test.worker";
+
+// const code = myWorker.toString();
+// const blob = new Blob(["(" + code + ")()"]);
+// const worker = new Worker(URL.createObjectURL(blob));
+// worker.addEventListener("message", event => {
+//   console.log("event: ", event.data);
+// });
+// worker.postMessage({ id: 123, name: "asd" });
 
 const checkFetchedData = ({ mnemotecnicos = [], dates = [], fetched = {} }) => {
   try {
@@ -69,18 +78,24 @@ const createBlocks = ({ fetch }) => {
   }
 };
 
-const fetchData = async (url: string) => {
-  const result = await axios.get(
-    `${apiConstants.API_URL}${apiConstants.COSTOS_MARGINALES_REALES}${url}`,
-    {
-      headers: {
-        crossorigin: true,
-        "Access-Control-Allow-Origin": "*"
+const fetchData = (url: string) => {
+  // worker.postMessage({
+  //   uri: `${apiConstants.API_URL}${apiConstants.COSTOS_MARGINALES_REALES}${url}`
+  // });
+  return axios
+    .get(
+      `${apiConstants.API_URL}${apiConstants.COSTOS_MARGINALES_REALES}${url}`,
+      {
+        headers: {
+          crossorigin: true,
+          "Access-Control-Allow-Origin": "*"
+        }
       }
-    }
-  );
-  const { data = {} } = result;
-  return data && data.data ? data.data.data : [];
+    )
+    .then(result => {
+      const { data = {} } = result;
+      return data && data.data ? data.data.data : [];
+    });
 };
 
 export const costosService = {

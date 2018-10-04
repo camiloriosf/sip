@@ -2,6 +2,19 @@
 
 import { costosConstants } from "../_constants";
 import { costosService } from "../_services";
+import myWorker from "../_workers/test.worker";
+
+const code = myWorker.toString();
+const blob = new Blob(["(" + code + ")()"]);
+const worker = new Worker(URL.createObjectURL(blob));
+// worker.addEventListener("message", event => {
+//   console.log("event: ", event.data);
+//   test(event.data);
+// });
+
+// const test = data => {
+//   console.log("test: ", data);
+// };
 
 const setSelectedBarras = selected => {
   return async dispatch => {
@@ -120,19 +133,25 @@ const fetchCostosMarginalesReales = () => {
       });
       const blocks = costosService.createBlocks({ fetch });
       const fetchCount = blocks.length;
+      const compiledResults = [];
       for (const item of blocks) {
         const { mnemotecnico, start, end } = item;
         const url = `?barra_mnemotecnico__in=${mnemotecnico}&fecha__gte=${start}&fecha__lte=${end}`;
-        costosService
-          .fetchData(window.encodeURIComponent(url))
-          .then(results => {
-            dispatch(success({ item, results, fetchCount }));
-          })
-          .catch(() => {
-            dispatch(error({ fetchCount }));
-          });
+        // costosService
+        //   .fetchData(window.encodeURIComponent(url))
+        //   .then(results => {
+        //     dispatch(success({ item, results, fetchCount }));
+        //   })
+        //   .catch(() => {
+        //     dispatch(error({ fetchCount }));
+        //   });
+        const results = await costosService.fetchData(
+          window.encodeURIComponent(url)
+        );
+        compiledResults.push(...results);
       }
-
+      // console.log(compiledResults);
+      // worker.postMessage({ compiledResults });
       if (blocks.length === 0)
         dispatch(success({ item: {}, results: [], fetchCount: 0 }));
     } catch (err) {

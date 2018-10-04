@@ -14,6 +14,7 @@ import MoneyFilter from "../../components/money-filter";
 import DateFilter from "../../components/date-filter";
 import { costosActions } from "../../_actions";
 import { formatService } from "../../_services";
+// import myWorker from "../../_workers/test.worker";
 
 const styles = theme => ({
   root: {
@@ -44,6 +45,15 @@ type Props = {
 type State = {};
 
 class Costos extends React.Component<Props, State> {
+  // componentDidMount() {
+  //   const code = myWorker.toString();
+  //   const blob = new Blob(["(" + code + ")()"]);
+  //   const worker = new Worker(URL.createObjectURL(blob));
+  //   worker.addEventListener("message", event => {
+  //     console.log("event: ", event.data);
+  //   });
+  //   worker.postMessage({ id: 123, name: "asd" });
+  // }
   handleChange = value => {
     this.props.setSelectedBarras(value);
   };
